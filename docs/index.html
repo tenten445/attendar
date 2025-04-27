@@ -6,20 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Googleログイン</title>
     <script>
+        // Google Identity Servicesのコールバック関数
         function handleCredentialResponse(response) {
             const jwtToken = response.credential;
 
             // JWTをデコードしてユーザー情報を取得
             const user = parseJwt(jwtToken);
 
-            // ローカルストレージにトークンを保存
-            localStorage.setItem('jwtToken', jwtToken);
+            // ユーザー情報を表示
+            const userInfo = document.getElementById('user-info');
+            const userPicture = document.getElementById('user-picture');
+            const userSection = document.getElementById('user-section');
 
-            // ページにユーザー情報を表示
-            document.getElementById('user-info').innerText = `ようこそ、${user.name}さん！`;
-            document.getElementById('user-picture').src = user.picture;
-            document.getElementById('user-section').style.display = 'block';
-            document.getElementById('logout-btn').style.display = 'block';
+            if (userInfo && userPicture && userSection) {
+                userInfo.innerText = `ようこそ、${user.name}さん！`;
+                userPicture.src = user.picture;
+                userSection.style.display = 'block';
+            } else {
+                console.error('必要なHTML要素が存在しません。');
+            }
         }
 
         function parseJwt(token) {
@@ -28,34 +33,18 @@
             const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
             }).join(''));
-
             return JSON.parse(jsonPayload);
         }
 
-        window.onload = function () {
-            const jwtToken = localStorage.getItem('jwtToken');
-
-            if (jwtToken) {
-                const user = parseJwt(jwtToken);
-
-                document.getElementById('user-info').innerText = `ようこそ、${user.name}さん！`;
-                document.getElementById('user-picture').src = user.picture;
-                document.getElementById('user-section').style.display = 'block';
-                document.getElementById('logout-btn').style.display = 'block';
-            }
-        };
-
-        document.getElementById('logout-btn').addEventListener('click', function () {
-            localStorage.removeItem('jwtToken');
-            document.getElementById('user-section').style.display = 'none';
-            document.getElementById('logout-btn').style.display = 'none';
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('HTMLが読み込まれました。必要な要素を確認しています...');
         });
     </script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
-    <h1>Googleログインデモ２</h1>
+    <h1>Googleログインデモ</h1>
     <div id="g_id_onload"
         data-client_id="775352245980-qg5lq2jcetci9mv4fa4a5oa4522hlef9.apps.googleusercontent.com"
         data-login_uri="https://tenten445.github.io/bukatu_app/main.html"
@@ -75,8 +64,6 @@
         <h2 id="user-info"></h2>
         <img id="user-picture" alt="プロフィール画像" style="border-radius: 50%;">
     </div>
-
-    <button id="logout-btn" style="display: none;">ログアウト</button>
 </body>
 
 </html>
