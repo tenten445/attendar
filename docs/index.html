@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログイン付きカレンダー２</title>
+    <title>ログイン付きカレンダー</title>
     <link rel="stylesheet" href="style.css">
     <script>
         // JWTデコード関数
@@ -19,10 +19,17 @@
 
         // Google Identity Services コールバック関数
         window.handleCredentialResponse = function (response) {
+            console.log("Googleログインのレスポンス:", response); // ログを追加
             const jwtToken = response.credential;
+
+            if (!jwtToken) {
+                console.error("JWTトークンが取得できませんでした。");
+                return;
+            }
 
             // JWTをデコードしてユーザー情報を取得
             const user = parseJwt(jwtToken);
+            console.log("デコードされたユーザー情報:", user); // ログを追加
 
             // ローカルストレージにトークンを保存
             localStorage.setItem('jwtToken', jwtToken);
@@ -41,8 +48,11 @@
         // ページロード時のログイン状態確認
         document.addEventListener("DOMContentLoaded", function () {
             const jwtToken = localStorage.getItem('jwtToken');
+            console.log("ローカルストレージから取得したJWTトークン:", jwtToken); // ログを追加
+
             if (jwtToken) {
                 const user = parseJwt(jwtToken);
+                console.log("自動ログインのユーザー情報:", user); // ログを追加
                 showCalendar(user);
             }
 
