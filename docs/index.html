@@ -35,14 +35,21 @@
             localStorage.setItem('jwtToken', jwtToken);
 
             // ログイン成功時にカレンダーを表示
-            showCalendar(user);
+            showCalendarForUser(user);
         };
 
         // カレンダー表示関数
-        function showCalendar(user) {
+        function showCalendarForUser(user) {
             document.getElementById("user-info").innerText = `ようこそ、${user.name}さん！`;
             document.getElementById("calendar-container").style.display = "block";
             document.getElementById("login-container").style.display = "none";
+
+            // カレンダー初期化
+            if (typeof showCalendar === "function") {
+                showCalendar(year, month); // main.js のカレンダー関数を呼び出す
+            } else {
+                console.error("showCalendar 関数が定義されていません");
+            }
         }
 
         // ページロード時のログイン状態確認
@@ -53,7 +60,7 @@
             if (jwtToken) {
                 const user = parseJwt(jwtToken);
                 console.log("自動ログインのユーザー情報:", user); // ログを追加
-                showCalendar(user);
+                showCalendarForUser(user);
             }
 
             // ログアウト機能
@@ -97,6 +104,9 @@
         <div id="calendar"></div>
         <button id="logout-btn">ログアウト</button>
     </div>
+
+    <!-- main.js を読み込み -->
+    <script src="main.js"></script>
 </body>
 
 </html>
