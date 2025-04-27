@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="jp">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Googleログインデモ</title>
-    <!-- ファビコンを指定 -->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <title>ログイン付きカレンダー</title>
+    <link rel="stylesheet" href="style.css">
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Google Identity Servicesのコールバック関数
@@ -19,8 +18,8 @@
                 // ローカルストレージにトークンを保存
                 localStorage.setItem('jwtToken', jwtToken);
 
-                // ログイン成功時にリダイレクト
-                window.location.href = "https://tenten445.github.io/bukatu_app/main.html";
+                // ログイン成功時にカレンダーを表示
+                showCalendar(user);
             }
 
             function parseJwt(token) {
@@ -32,32 +31,65 @@
                 return JSON.parse(jsonPayload);
             }
 
-            // ページ読み込み時にログイン状態を復元
+            function showCalendar(user) {
+                // ユーザー情報を表示
+                document.getElementById("user-info").innerText = `ようこそ、${user.name}さん！`;
+
+                // カレンダーとボタンを表示
+                document.getElementById("calendar-container").style.display = "block";
+                document.getElementById("login-container").style.display = "none";
+            }
+
+            // ページ読み込み時にログイン状態を確認
             const jwtToken = localStorage.getItem('jwtToken');
             if (jwtToken) {
-                // ログイン済みの場合、直接リダイレクト
-                window.location.href = "https://tenten445.github.io/bukatu_app/main.html";
+                const user = parseJwt(jwtToken);
+                showCalendar(user);
             }
+
+            // ログアウト機能
+            document.getElementById("logout-btn").addEventListener("click", function () {
+                localStorage.removeItem("jwtToken");
+                document.getElementById("calendar-container").style.display = "none";
+                document.getElementById("login-container").style.display = "block";
+            });
+
+            // Googleのコールバック関数をグローバルに設定
+            window.handleCredentialResponse = handleCredentialResponse;
         });
     </script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
-    <h1>Googleログインデモ</h1>
-    <div id="g_id_onload"
-        data-client_id="775352245980-qg5lq2jcetci9mv4fa4a5oa4522hlef9.apps.googleusercontent.com"
-        data-login_uri="https://tenten445.github.io/bukatu_app/main.html"
-        data-auto_prompt="false"
-        data-callback="handleCredentialResponse">
+    <!-- ログインセクション -->
+    <div id="login-container">
+        <h1>ログインしてください</h1>
+        <div id="g_id_onload"
+            data-client_id="775352245980-qg5lq2jcetci9mv4fa4a5oa4522hlef9.apps.googleusercontent.com"
+            data-login_uri=""
+            data-auto_prompt="false"
+            data-callback="handleCredentialResponse">
+        </div>
+        <div class="g_id_signin"
+            data-type="standard"
+            data-size="large"
+            data-theme="outline"
+            data-text="sign_in_with"
+            data-shape="rectangular"
+            data-logo_alignment="left">
+        </div>
     </div>
-    <div class="g_id_signin"
-        data-type="standard"
-        data-size="large"
-        data-theme="outline"
-        data-text="sign_in_with"
-        data-shape="rectangular"
-        data-logo_alignment="left">
+
+    <!-- カレンダーセクション -->
+    <div id="calendar-container" style="display: none;">
+        <div class="button-wrapper">
+            <button id="prev" type="button">前の月</button>
+            <button id="next" type="button">次の月</button>
+        </div>
+        <div id="calendar"></div>
+        <button id="logout-btn">ログアウト</button>
+        <script src="main.js"></script>
     </div>
 </body>
 
