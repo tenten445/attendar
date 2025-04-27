@@ -1,4 +1,4 @@
-const SCRIPT_URL = "https://script.google.com/a/macros/ktc.ac.jp/s/AKfycbwhLWwtfEnEFXSKFbMrAntr-acRfmPznMT9Ic2ZH9BFWWICbtPKcsQp9hje25idar6v_Q/exec"; // GASのウェブアプリURLをここに貼り付け
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhLWwtfEnEFXSKFbMrAntr-acRfmPznMT9Ic2ZH9BFWWICbtPKcsQp9hje25idar6v_Q/exec"; // GASのウェブアプリURLをここに貼り付け
 
 function logActionToSheet(name, email, action) {
   const data = {
