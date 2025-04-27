@@ -19,19 +19,8 @@
                 // ローカルストレージにトークンを保存
                 localStorage.setItem('jwtToken', jwtToken);
 
-                // ページにユーザー情報を表示
-                const userInfo = document.getElementById('user-info');
-                const userPicture = document.getElementById('user-picture');
-                const userSection = document.getElementById('user-section');
-
-                if (userInfo && userPicture && userSection) {
-                    userInfo.innerText = `ようこそ、${user.name}さん！`;
-                    userPicture.src = user.picture;
-                    userSection.style.display = 'block';
-                    document.getElementById('logout-btn').style.display = 'block';
-                } else {
-                    console.error("必要なHTML要素が存在しません。");
-                }
+                // ログイン成功時にリダイレクト
+                window.location.href = "https://tenten445.github.io/bukatu_app/main.html";
             }
 
             function parseJwt(token) {
@@ -46,28 +35,16 @@
             // ページ読み込み時にログイン状態を復元
             const jwtToken = localStorage.getItem('jwtToken');
             if (jwtToken) {
-                const user = parseJwt(jwtToken);
-                document.getElementById('user-info').innerText = `ようこそ、${user.name}さん！`;
-                document.getElementById('user-picture').src = user.picture;
-                document.getElementById('user-section').style.display = 'block';
-                document.getElementById('logout-btn').style.display = 'block';
+                // ログイン済みの場合、直接リダイレクト
+                window.location.href = "https://tenten445.github.io/bukatu_app/main.html";
             }
-
-            // ログアウト機能
-            document.getElementById('logout-btn').addEventListener('click', function () {
-                localStorage.removeItem('jwtToken');
-                document.getElementById('user-section').style.display = 'none';
-                document.getElementById('logout-btn').style.display = 'none';
-            });
-
-            window.handleCredentialResponse = handleCredentialResponse; // グローバルで使用可能にする
         });
     </script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
-    <h1>Googleログインデモ２</h1>
+    <h1>Googleログインデモ</h1>
     <div id="g_id_onload"
         data-client_id="775352245980-qg5lq2jcetci9mv4fa4a5oa4522hlef9.apps.googleusercontent.com"
         data-login_uri="https://tenten445.github.io/bukatu_app/main.html"
@@ -82,13 +59,6 @@
         data-shape="rectangular"
         data-logo_alignment="left">
     </div>
-
-    <div id="user-section" style="display: none; margin-top: 20px;">
-        <h2 id="user-info"></h2>
-        <img id="user-picture" alt="プロフィール画像" style="border-radius: 50%;">
-    </div>
-
-    <button id="logout-btn" style="display: none;">ログアウト</button>
 </body>
 
 </html>
