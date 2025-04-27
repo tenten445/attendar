@@ -27,6 +27,8 @@ const holidays = new Map([
 ]);
 
 function showCalendar(year, month) {
+    const calendarContainer = document.querySelector('#calendar');
+    calendarContainer.innerHTML = '';
     for (let i = 0; i < config.show; i++) {
         const calendarHtml = createCalendar(year, month);
         const sec = document.createElement('section');
