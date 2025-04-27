@@ -4,27 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Googleログイン</title>
+    <title>Googleログインデモ２</title>
     <script>
-        // Google Identity Servicesのコールバック関数
         function handleCredentialResponse(response) {
             const jwtToken = response.credential;
 
             // JWTをデコードしてユーザー情報を取得
             const user = parseJwt(jwtToken);
 
-            // ユーザー情報を表示
-            const userInfo = document.getElementById('user-info');
-            const userPicture = document.getElementById('user-picture');
-            const userSection = document.getElementById('user-section');
+            // ローカルストレージにトークンを保存
+            localStorage.setItem('jwtToken', jwtToken);
 
-            if (userInfo && userPicture && userSection) {
-                userInfo.innerText = `ようこそ、${user.name}さん！`;
-                userPicture.src = user.picture;
-                userSection.style.display = 'block';
-            } else {
-                console.error('必要なHTML要素が存在しません。');
-            }
+            // ページにユーザー情報を表示
+            document.getElementById('user-info').innerText = `ようこそ、${user.name}さん！`;
+            document.getElementById('user-picture').src = user.picture;
+            document.getElementById('user-section').style.display = 'block';
+            document.getElementById('logout-btn').style.display = 'block';
         }
 
         function parseJwt(token) {
@@ -36,8 +31,23 @@
             return JSON.parse(jsonPayload);
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('HTMLが読み込まれました。必要な要素を確認しています...');
+        window.onload = function () {
+            const jwtToken = localStorage.getItem('jwtToken');
+
+            if (jwtToken) {
+                const user = parseJwt(jwtToken);
+
+                document.getElementById('user-info').innerText = `ようこそ、${user.name}さん！`;
+                document.getElementById('user-picture').src = user.picture;
+                document.getElementById('user-section').style.display = 'block';
+                document.getElementById('logout-btn').style.display = 'block';
+            }
+        };
+
+        document.getElementById('logout-btn').addEventListener('click', function () {
+            localStorage.removeItem('jwtToken');
+            document.getElementById('user-section').style.display = 'none';
+            document.getElementById('logout-btn').style.display = 'none';
         });
     </script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -64,6 +74,8 @@
         <h2 id="user-info"></h2>
         <img id="user-picture" alt="プロフィール画像" style="border-radius: 50%;">
     </div>
+
+    <button id="logout-btn" style="display: none;">ログアウト</button>
 </body>
 
 </html>
