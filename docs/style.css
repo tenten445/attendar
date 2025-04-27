@@ -1,0 +1,101 @@
+body {
+    text-align: center;
+    font-family: sans-serif;
+}
+
+#calendar {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    width: 100px;
+    height: 80px;
+    vertical-align: top;
+    text-align: left;
+    padding: 5px;
+    position: relative;
+}
+
+td.is-disabled {
+    background-color: #f5f5f5;
+    color: #ccc;
+}
+
+.calendar_td .day-number {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.calendar_td small {
+    display: block;
+    font-size: 12px;
+    color: red;
+    margin-top: 5px;
+}
+
+.holiday {
+    background-color: #ffeaea;
+}
+
+.today {
+    background-color: yellow;
+}
+
+.holiday.today {
+    background-color: orange;
+}
+
+.selected {
+    border: 2px solid red;
+    box-sizing: border-box; /* はみ出し防止 */
+}
+
+.attendance-check {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.attendance-check label {
+  margin: 0 10px;
+  font-size: 1.2em;
+}
+
+/* 参加（赤丸） */
+.attendance-participate .day-number::after {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    margin: 5px 0 0 0; /* 上下マージンの調整、左寄せ */
+    position: relative;
+    left: 0; /* 左寄せ */
+}
+
+/* 欠席（青丸） */
+.attendance-absent .day-number::after {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-color: blue;
+    border-radius: 50%;
+    margin: 20px 0 0 0; /* 上下マージンの調整、左寄せ */
+    position: relative;
+    left: 0; /* 左寄せ */
+}
