@@ -173,6 +173,12 @@ document.addEventListener("click", function (e) {
                 radio.checked = radio.value === "未回答";
             });
         }
+        
+        const dateStr = e.target.getAttribute('data-date');
+        const selectedAttendance = document.querySelector('input[name="attendance"]:checked').value;
+
+        // 出席状況をスプレッドシートに送信
+        google.script.run.logAttendance(dateStr, selectedAttendance); // GAS 関数を呼び出し
 
     }
     if (e.target.name === "attendance") {
