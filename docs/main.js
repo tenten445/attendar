@@ -143,8 +143,6 @@ document.querySelector('#prev').addEventListener('click', moveCalendar);
 document.querySelector('#next').addEventListener('click', moveCalendar);
 
 // 日付クリックで「選択」できるように
-
-
 document.addEventListener("click", function (e) {
     if (e.target.classList.contains("calendar_td")) {
         // すべてのセルから 'selected' を削除
@@ -177,10 +175,10 @@ document.addEventListener("click", function (e) {
         const dateStr = e.target.getAttribute('data-date');
         const selectedAttendance = document.querySelector('input[name="attendance"]:checked').value;
 
-     const userName = localStorage.getItem('userName'); // もしくはJWTから名前を取得
+        const userName = localStorage.getItem('userName'); // もしくはJWTから名前を取得
 
         // Google Apps Script Web アプリに POST リクエストを送信
-        fetch('https://script.google.com/macros/s/1Xtucpd--ewe9wsW61h7DZ3by4ATwLJYySxixIA0t0v9AsxgHlIx0xPQ_/exec', {
+        fetch('https://script.google.com/a/macros/ktc.ac.jp/s/AKfycbzhYO1BXj6d9UpI-O9N_LffqaDMIGVUkJFLaTx8AyLcH_cO7m6PlFuwtA_H-gAEiK4ILw/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
