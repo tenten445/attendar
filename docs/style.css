@@ -74,6 +74,11 @@ td.is-disabled {
   font-size: 1.2em;
 }
 
+h1 {
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+
 /* 参加（赤丸） */
 .attendance-participate .day-number::after {
     content: '';
