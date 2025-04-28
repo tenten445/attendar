@@ -177,9 +177,29 @@ document.addEventListener("click", function (e) {
         const dateStr = e.target.getAttribute('data-date');
         const selectedAttendance = document.querySelector('input[name="attendance"]:checked').value;
 
-        // 出席状況をスプレッドシートに送信
-        google.script.run.logAttendance(dateStr, selectedAttendance); // GAS 関数を呼び出し
+     const userName = localStorage.getItem('userName'); // もしくはJWTから名前を取得
 
+        // Google Apps Script Web アプリに POST リクエストを送信
+        fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                date: dateStr,
+                userName: userName,
+                attendanceStatus: selectedAttendance
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+        
     }
     if (e.target.name === "attendance") {
         const selectedCell = document.querySelector(".calendar_td.selected");
