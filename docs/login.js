@@ -25,3 +25,6 @@ function logActionToSheet(name, email, action) {
       console.error("エラーが発生しました:", error);
     });
 }
+
+// 使用例
+logActionToSheet("ユーザー名", "user@example.com", "Login");
