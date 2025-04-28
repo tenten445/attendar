@@ -13,7 +13,7 @@ const holidays = new Map([
     ['2025/2/11', '建国記念の日'],
     ['2025/2/23', '天皇誕生日'],
     ['2025/3/20', '春分の日'],
-    ['2025/4/29', '昭和の日2'],
+    ['2025/4/29', '昭和の日'],
     ['2025/5/3', '憲法記念日'],
     ['2025/5/4', 'みどりの日'],
     ['2025/5/5', 'こどもの日'],
@@ -176,26 +176,6 @@ document.addEventListener("click", function (e) {
         const selectedAttendance = document.querySelector('input[name="attendance"]:checked').value;
 
         const userName = localStorage.getItem('userName'); // もしくはJWTから名前を取得
-
-        // Google Apps Script Web アプリに POST リクエストを送信
-        fetch('https://script.google.com/a/macros/ktc.ac.jp/s/AKfycbzhYO1BXj6d9UpI-O9N_LffqaDMIGVUkJFLaTx8AyLcH_cO7m6PlFuwtA_H-gAEiK4ILw/exec', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                date: dateStr,
-                userName: userName,
-                attendanceStatus: selectedAttendance
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
 
         
     }
