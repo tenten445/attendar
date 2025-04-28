@@ -180,7 +180,7 @@ document.addEventListener("click", function (e) {
      const userName = localStorage.getItem('userName'); // もしくはJWTから名前を取得
 
         // Google Apps Script Web アプリに POST リクエストを送信
-        fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
+        fetch('https://script.google.com/macros/s/1Xtucpd--ewe9wsW61h7DZ3by4ATwLJYySxixIA0t0v9AsxgHlIx0xPQ_/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
