@@ -1,4 +1,4 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhLWwtfEnEFXSKFbMrAntr-acRfmPznMT9Ic2ZH9BFWWICbtPKcsQp9hje25idar6v_Q/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3UPc62uqGAglmajJz77JI5m1idzJ66-07BKyurL2P2tJzbqDzywhMGc2-HLwnMpbD3w/exec";
 
 function logActionToSheet(name, email, action) {
   const data = {
