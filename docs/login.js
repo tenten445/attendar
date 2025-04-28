@@ -1,4 +1,4 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhLWwtfEnEFXSKFbMrAntr-acRfmPznMT9Ic2ZH9BFWWICbtPKcsQp9hje25idar6v_Q/exec"; // GASのウェブアプリURLをここに貼り付け
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhLWwtfEnEFXSKFbMrAntr-acRfmPznMT9Ic2ZH9BFWWICbtPKcsQp9hje25idar6v_Q/exec";
 
 function logActionToSheet(name, email, action) {
   const data = {
@@ -10,7 +10,9 @@ function logActionToSheet(name, email, action) {
   fetch(SCRIPT_URL, {
     method: "POST",
     body: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
   })
     .then((response) => {
       if (!response.ok) {
@@ -19,12 +21,16 @@ function logActionToSheet(name, email, action) {
       return response.json();
     })
     .then((data) => {
-      console.log("ログが保存されました:", data);
+      if (data.result === "success") {
+        console.log("データが正常にスプレッドシートに追加されました:", data);
+      } else {
+        console.error("エラーが発生しました:", data.message);
+      }
     })
     .catch((error) => {
-      console.error("エラーが発生しました:", error);
+      console.error("リクエストエラー:", error);
     });
 }
 
 // 使用例
-logActionToSheet("ユーザー名", "user@example.com", "Login");
+logActionToSheet("植田天", "g04045@ktc.ac.jp", "Login");
