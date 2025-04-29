@@ -145,6 +145,7 @@ document.querySelector('#next').addEventListener('click', moveCalendar);
 // 日付クリックで「選択」できるように
 document.addEventListener("click", function (e) {
     if (e.target.classList.contains("calendar_td")) {
+        
         // すべてのセルから 'selected' を削除
         document.querySelectorAll(".calendar_td").forEach(td => {
             td.classList.remove("selected");
@@ -152,6 +153,12 @@ document.addEventListener("click", function (e) {
 
         // クリックされたセルに 'selected' を追加
         e.target.classList.add("selected");
+// 例: カレンダーで選択されたときに呼び出す
+const dateStr = '2025/4/29';
+const userName = '植田天';
+const attendance = '参加';
+
+writeToSheet(dateStr, userName, attendance);
 
         // ラジオボタンの状態を更新
         const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
