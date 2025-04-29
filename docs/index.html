@@ -198,6 +198,19 @@
         console.log("書き込み完了");
         attendanceData = await fetchAttendanceData();
         showCalendar(year, month);
+
+
+  // ✅ 再度選択状態に戻す（書き込んだ日付を選択状態にする）
+    setTimeout(() => {
+      const cell = document.querySelector(`td[data-date="${date}"]`);
+      if (cell) {
+        cell.classList.add("selected");
+
+        const list = attendanceData.get(date) || [];
+        const names = list.filter(p => p.status === "参加").map(p => p.name).join("<br>");
+        document.getElementById("participant-list").innerHTML = `<strong>${date} の参加者:</strong><br>${names}`;
+      }
+    }, 100); // 少し遅延してDOMが更新されてから選択        
       } catch (e) {
         console.error("書き込みエラー:", e);
       }
