@@ -83,7 +83,7 @@ function createCalendar(year, month) {
             } else if (dayCount > endDayCount) {
                 calendarHtml += '<td class="is-disabled"></td>';
             } else {
-                const calendarDateStr = `${year}/${month}/${dayCount}`;
+                const calendarDateStr = `${year}/${month}/${dayCount}`;  // 名前変更
                 const isHoliday = holidays.has(calendarDateStr);
                 const holidayName = holidays.get(calendarDateStr);
                 let classes = "calendar_td";
@@ -159,17 +159,17 @@ document.addEventListener("click", function (e) {
         const selectedAttendance = document.querySelector('input[name="attendance"]:checked')?.value;
 
         // ユーザー名取得（ログイン時に localStorage に保存してあると仮定）
-        const userName = localStorage.getItem('userName');
-        if (!userName) {
-            alert("ログインしていません。");
-            return;
-        }
+        // const userName = localStorage.getItem('userName');
+        // if (!userName) {
+        //     alert("ログインしていません。");
+        //     return;
+        // }
 
-        // 書き込み処理を呼び出し
-        if (selectedAttendance !== "未回答") {
-            writeToSheet(clickedDateStr, userName, selectedAttendance);
-        }
-
+    // 書き込み処理を呼び出し
+        // if (selectedAttendance !== "未回答") {
+        //     writeToSheet(clickedDateStr, userName, selectedAttendance);
+        // }
+        
         // ラジオボタンの状態を更新
         const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
         if (e.target.classList.contains("attendance-participate")) {
@@ -202,17 +202,20 @@ document.addEventListener("click", function (e) {
             } else if (e.target.value === "欠席") {
                 selectedCell.classList.add("attendance-absent"); // 青丸
             }
+         const clickedDateStr = selectedCell.getAttribute("data-date");
+        const selectedAttendance = e.target.value;
+         const userName = localStorage.getItem("userName");
 
-            const clickedDateStr = selectedCell.getAttribute("data-date");
-            const selectedAttendance = e.target.value;
-
-            if (selectedAttendance !== "未回答") {
-                writeToSheet(clickedDateStr, userName, selectedAttendance);
-            }
+        // if (!userName) {
+        //     alert("ログインしていません。");
+        //     return;
+        // }
+              if (selectedAttendance !== "未回答") {
+            writeToSheet(clickedDateStr, userName, selectedAttendance);
+        }
         }
     }
 });
-
 
 // 最初に表示
 showCalendar(year, month);
