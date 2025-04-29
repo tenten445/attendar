@@ -1,5 +1,5 @@
 // 必要な設定
-const SHEET_ID = '1W61LsGM7uS9RwKgI5KFJ4reulIC0s5aNvb2QLDOo4KA'; // スプレッドシートID
+const SHEET_ID = '1W61LsGM7uS9RwKgI5KFJ4reulIC0s5aNvb2QLDOo4KA'; // 例: 1ABCdEfGhIJK...
 const SHEET_NAME = 'シート1'; // シート名（タブの名前）
 
 // OAuthクライアントID（Google Cloud Console から取得）
@@ -34,7 +34,9 @@ function gapiInit() {
 async function writeToSheet(date, name, attendance) {
     // トークンがまだ取得されていなければログイン要求
     if (!gapi.client.getToken()) {
-        tokenClient.callback = async (tokenResponse) => {
+
+        
+   tokenClient.callback = async (tokenResponse) => {
             if (tokenResponse.error) {
                 console.error('認証エラー:', tokenResponse);
                 return;
@@ -42,11 +44,12 @@ async function writeToSheet(date, name, attendance) {
             console.log('認証成功');
             await writeToSheet(date, name, attendance); // 再実行
         };
-        tokenClient.requestAccessToken();  // 認証要求
+        
+        tokenClient.requestAccessToken();
         return;
     }
 
-    const values = [[date, name, attendance]]; // 出欠情報を準備
+    const values = [[date, name, attendance]];
 
     const body = {
         values: values,
@@ -55,7 +58,7 @@ async function writeToSheet(date, name, attendance) {
     try {
         const response = await gapi.client.sheets.spreadsheets.values.append({
             spreadsheetId: SHEET_ID,
-            range: `${SHEET_NAME}!A1`, // A1から書き込む
+            range: `${SHEET_NAME}!A1`,
             valueInputOption: 'USER_ENTERED',
             insertDataOption: 'INSERT_ROWS',
             resource: body,
