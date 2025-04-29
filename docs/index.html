@@ -1,70 +1,117 @@
+
 <!DOCTYPE html>
 <html lang="jp">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ログイン付きカレンダー</title>
-  <link rel="stylesheet" href="style.css">
 
-  <!-- Google Identity & API -->
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン付きカレンダー</title>
+    <link rel="stylesheet" href="style.css">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://apis.google.com/js/api.js"></script>
+    <script>
+        // JWTデコード関数
+        function parseJwt(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        // Google Identity Services コールバック関数
+        window.handleCredentialResponse = function (response) {
+            console.log("Googleログインのレスポンス:", response); // ログを追加
+            const jwtToken = response.credential;
+
+            if (!jwtToken) {
+                console.error("JWTトークンが取得できませんでした。");
+                return;
+            }
+
+            // JWTをデコードしてユーザー情報を取得
+            const user = parseJwt(jwtToken);
+            console.log("デコードされたユーザー情報:", user); // ログを追加
+
+            // ローカルストレージにトークンを保存
+            localStorage.setItem('jwtToken', jwtToken);
+
+            // ログイン成功時にカレンダーを表示
+            showCalendarForUser(user);
+        };
+
+        // カレンダー表示関数
+        function showCalendarForUser(user) {
+            document.getElementById("user-info").innerText = `ようこそ、${user.name}さん！2`;
+            document.getElementById("calendar-container").style.display = "block";
+            document.getElementById("login-container").style.display = "none";
+
+            // カレンダー初期化
+            if (typeof showCalendar === "function") {
+                showCalendar(year, month); // main.js のカレンダー関数を呼び出す
+            } else {
+                console.error("showCalendar 関数が定義されていません");
+            }
+        }
+
+        // ページロード時のログイン状態確認
+        document.addEventListener("DOMContentLoaded", function () {
+            gapiInit(); // ← これを追加
+            const jwtToken = localStorage.getItem('jwtToken');
+            console.log("ローカルストレージから取得したJWTトークン:", jwtToken); // ログを追加
+
+            if (jwtToken) {
+                const user = parseJwt(jwtToken);
+                console.log("自動ログインのユーザー情報:", user); // ログを追加
+                showCalendarForUser(user);
+            }
+
+            // ログアウト機能
+            document.getElementById("logout-btn").addEventListener("click", function () {
+                localStorage.removeItem("jwtToken");
+                document.getElementById("calendar-container").style.display = "none";
+                document.getElementById("login-container").style.display = "block";
+            });
+        });
+    </script>
 </head>
 
 <body>
-  <!-- ログインセクション -->
-  <div id="login-container">
-    <h1>ログインしてください</h1>
-    <div id="login-button"></div> <!-- Googleログインボタン -->
-  </div>
-
-  <!-- カレンダーセクション -->
-  <div id="calendar-container" style="display: none;">
-    <h2 id="user-info"></h2>
-    <div class="button-wrapper">
-      <button id="prev" type="button">前の月</button>
-      <button id="next" type="button">次の月</button>
+    <!-- ログインセクション -->
+    <div id="login-container">
+        <h1>ログインしてください</h1>
+        <div id="g_id_onload"
+            data-client_id="775352245980-g6dm3nv0pcpn9q1ga0s0c03r755669gb.apps.googleusercontent.com"
+            data-login_uri=""
+            data-auto_prompt="false"
+            data-callback="handleCredentialResponse">
+        </div>
+        <div class="g_id_signin"
+            data-type="standard"
+            data-size="large"
+            data-theme="outline"
+            data-text="sign_in_with"
+            data-shape="rectangular"
+            data-logo_alignment="left">
+        </div>
     </div>
-    <div id="calendar"></div>
-    <button id="logout-btn">ログアウト</button>
-  </div>
 
-  <!-- スクリプト群 -->
-  <script src="main.js"></script>
-  <script src="login.js"></script>
+    <!-- カレンダーセクション -->
+    <div id="calendar-container" style="display: none;">
+        <h2 id="user-info"></h2>
+        <div class="button-wrapper">
+            <button id="prev" type="button">前の月</button>
+            <button id="next" type="button">次の月</button>
+        </div>
+        <div id="calendar"></div>
+        <button id="logout-btn">ログアウト</button>
+    </div>
 
-  <script>
-    // ページロード時のログイン状態確認・ログアウト設定
-    document.addEventListener("DOMContentLoaded", function () {
-      const jwtToken = localStorage.getItem('jwtToken');
-
-      if (jwtToken) {
-        const user = parseJwt(jwtToken);
-        document.getElementById("login-container").style.display = "none";
-        document.getElementById("calendar-container").style.display = "block";
-        document.getElementById("user-info").textContent = `ようこそ、${user.name}さん！`;
-        if (typeof showCalendar === "function") {
-          showCalendar(year, month);
-        }
-      }
-
-      document.getElementById("logout-btn").addEventListener("click", function () {
-        localStorage.removeItem("jwtToken");
-        localStorage.removeItem("userName");
-        document.getElementById("calendar-container").style.display = "none";
-        document.getElementById("login-container").style.display = "block";
-      });
-    });
-
-    // JWTトークンをデコードする関数（login.jsで未定義ならここで定義）
-    function parseJwt(token) {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-      return JSON.parse(jsonPayload);
-    }
-  </script>
+    <!-- main.js を読み込み -->
+    <script src="main.js"></script>
+    <script src="login.js"></script>
 </body>
+
 </html>
