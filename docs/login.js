@@ -1,9 +1,9 @@
 // 必要な設定
-const SHEET_ID = 'あなたのスプレッドシートID'; // 例: 1ABCdEfGhIJK...
-const SHEET_NAME = '出席表'; // シート名（タブの名前）
+const SHEET_ID = '1W61LsGM7uS9RwKgI5KFJ4reulIC0s5aNvb2QLDOo4KA'; // 例: 1ABCdEfGhIJK...
+const SHEET_NAME = 'シート1'; // シート名（タブの名前）
 
 // OAuthクライアントID（Google Cloud Console から取得）
-const CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
+const CLIENT_ID = '775352245980-g6dm3nv0pcpn9q1ga0s0c03r755669gb.apps.googleusercontent.com';
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
 let tokenClient;
