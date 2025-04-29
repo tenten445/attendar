@@ -153,13 +153,23 @@ document.addEventListener("click", function (e) {
 
         // クリックされたセルに 'selected' を追加
         e.target.classList.add("selected");
-// 例: カレンダーで選択されたときに呼び出す
-const dateStr = '2025/4/29';
-const userName = '植田天';
-const attendance = '参加';
+              const dateStr = e.target.getAttribute('data-date');
 
-writeToSheet(dateStr, userName, attendance);
+        // 出欠取得
+        const selectedAttendance = document.querySelector('input[name="attendance"]:checked')?.value;
 
+        // ユーザー名取得（ログイン時に localStorage に保存してあると仮定）
+        const userName = localStorage.getItem('userName');
+        if (!userName) {
+            alert("ログインしていません。");
+            return;
+        }
+
+    // 書き込み処理を呼び出し
+        if (selectedAttendance !== "未回答") {
+            writeToSheet(dateStr, userName, selectedAttendance);
+        }
+        
         // ラジオボタンの状態を更新
         const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
         if (e.target.classList.contains("attendance-participate")) {
