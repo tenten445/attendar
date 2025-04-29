@@ -56,6 +56,36 @@
             }
         }
 
+        
+window.onload = () => {
+    google.accounts.id.initialize({
+        client_id: "775352245980-g6dm3nv0pcpn9q1ga0s0c03r755669gb.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+        auto_select: true,
+    });
+
+    // サイレントログインを試行
+    google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            console.log("サイレントログイン失敗またはスキップ");
+        } else {
+            console.log("サイレントログイン成功または表示中");
+        }
+    });
+};
+
+function handleCredentialResponse(response) {
+    // IDトークンなどの処理（例: JWT デコード）
+    const credential = response.credential;
+    const payload = JSON.parse(atob(credential.split('.')[1]));
+    console.log("ログイン成功:", payload);
+
+    // ユーザー名など保存
+    localStorage.setItem("userName", payload.name);
+}
+
+
+        
         // ページロード時のログイン状態確認
         document.addEventListener("DOMContentLoaded", function () {
             gapiInit(); // ← これを追加
