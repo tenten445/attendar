@@ -117,6 +117,14 @@
             if (isHoliday) classes.push("holiday");
 
             const dayData = attendanceData.get(dateStr) || [];
+            const userName = localStorage.getItem("userName") || "匿名";
+const userStatus = dayData.find(entry => entry.name === userName)?.status;
+if (userStatus === "参加") {
+  classes.push("attendance-participate");
+} else if (userStatus === "欠席") {
+  classes.push("attendance-absent");
+  }
+
             const participants = dayData.filter(p => p.status === "参加");
             const participantCount = participants.length;
 
