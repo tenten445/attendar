@@ -204,7 +204,7 @@ document.addEventListener("click", function (e) {
             }
          const clickedDateStr = selectedCell.getAttribute("data-date");
         const selectedAttendance = e.target.value;
-        // const userName = localStorage.getItem("userName");
+         const userName = localStorage.getItem("userName");
 
         // if (!userName) {
         //     alert("ログインしていません。");
