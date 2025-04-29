@@ -1,15 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="jp">
 
 <head>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ログイン付きカレンダー</title>
     <link rel="stylesheet" href="style.css">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js"></script>
     <script>
         // JWTデコード関数
         function parseJwt(token) {
@@ -42,7 +40,24 @@
             showCalendarForUser(user);
         };
 
-        // カレンダー表示関数
+        // Google Sheets API 認証の初期化
+        function loadClient() {
+            gapi.client.init({
+                apiKey: 'YOUR_API_KEY',
+                clientId: 'YOUR_CLIENT_ID',
+                scope: 'https://www.googleapis.com/auth/spreadsheets',
+                discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4']
+            }).then(() => {
+                console.log('Google Sheets APIが初期化されました');
+            });
+        }
+
+        // Google Sheets APIの読み込み
+        function gapiInit() {
+            gapi.load('client:auth2', loadClient);
+        }
+
+        // Googleログイン後にカレンダーを表示
         function showCalendarForUser(user) {
             document.getElementById("user-info").innerText = `ようこそ、${user.name}さん！`;
             document.getElementById("calendar-container").style.display = "block";
@@ -56,36 +71,6 @@
             }
         }
 
-        
-window.onload = () => {
-    google.accounts.id.initialize({
-        client_id: "775352245980-g6dm3nv0pcpn9q1ga0s0c03r755669gb.apps.googleusercontent.com",
-        callback: handleCredentialResponse,
-        auto_select: true,
-    });
-
-    // サイレントログインを試行
-    google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            console.log("サイレントログイン失敗またはスキップ");
-        } else {
-            console.log("サイレントログイン成功または表示中");
-        }
-    });
-};
-
-function handleCredentialResponse(response) {
-    // IDトークンなどの処理（例: JWT デコード）
-    const credential = response.credential;
-    const payload = JSON.parse(atob(credential.split('.')[1]));
-    console.log("ログイン成功:", payload);
-
-    // ユーザー名など保存
-    localStorage.setItem("userName", payload.name);
-}
-
-
-        
         // ページロード時のログイン状態確認
         document.addEventListener("DOMContentLoaded", function () {
             gapiInit(); // ← これを追加
@@ -105,6 +90,58 @@ function handleCredentialResponse(response) {
                 document.getElementById("login-container").style.display = "block";
             });
         });
+
+        // 出欠情報をスプレッドシートに書き込む関数
+        function writeToSheet(date, userName, attendance) {
+            const sheetId = 'YOUR_SPREADSHEET_ID';  // あなたのスプレッドシートのID
+            const range = 'Sheet1!A:C';  // データを書き込む範囲
+
+            const valueRangeBody = {
+                values: [
+                    [date, userName, attendance]
+                ]
+            };
+
+            // Google Sheets APIを使ってデータを書き込む
+            gapi.client.sheets.spreadsheets.values.append({
+                spreadsheetId: sheetId,
+                range: range,
+                valueInputOption: 'RAW',
+                resource: valueRangeBody
+            }).then((response) => {
+                console.log('データがスプレッドシートに書き込まれました。');
+            }, (error) => {
+                console.error('エラーが発生しました: ' + error);
+            });
+        }
+
+        // 出欠情報を選択した日にちに基づいて保存する
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("calendar_td")) {
+                // すべてのセルから 'selected' を削除
+                document.querySelectorAll(".calendar_td").forEach(td => {
+                    td.classList.remove("selected");
+                });
+
+                // クリックされたセルに 'selected' を追加
+                e.target.classList.add("selected");
+                const clickedDateStr = e.target.getAttribute('data-date');  // 名前変更
+
+                // 出欠取得
+                const selectedAttendance = document.querySelector('input[name="attendance"]:checked')?.value;
+                const userName = localStorage.getItem('userName');
+                if (!userName) {
+                    alert("ログインしていません。");
+                    return;
+                }
+
+                // スプレッドシートに書き込み
+                if (selectedAttendance !== "未回答") {
+                    writeToSheet(clickedDateStr, userName, selectedAttendance);
+                }
+            }
+        });
+
     </script>
 </head>
 
@@ -113,7 +150,7 @@ function handleCredentialResponse(response) {
     <div id="login-container">
         <h1>ログインしてください</h1>
         <div id="g_id_onload"
-            data-client_id="775352245980-g6dm3nv0pcpn9q1ga0s0c03r755669gb.apps.googleusercontent.com"
+            data-client_id="YOUR_CLIENT_ID"
             data-login_uri=""
             data-auto_prompt="false"
             data-callback="handleCredentialResponse">
