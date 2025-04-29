@@ -13,7 +13,7 @@ const holidays = new Map([
     ['2025/2/11', '建国記念の日'],
     ['2025/2/23', '天皇誕生日'],
     ['2025/3/20', '春分の日'],
-    ['2025/4/29', '昭和の日2'],
+    ['2025/4/29', '昭和の日'],
     ['2025/5/3', '憲法記念日'],
     ['2025/5/4', 'みどりの日'],
     ['2025/5/5', 'こどもの日'],
@@ -55,6 +55,7 @@ function highlightToday() {
 }
 
 function createCalendar(year, month) {
+  const attendanceData = await fetchAttendanceData();
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
     const endDayCount = endDate.getDate();
@@ -91,6 +92,10 @@ function createCalendar(year, month) {
                 if (isHoliday) classes += " holiday";
                 if (calendarDateStr === todayStr) classes += " today";
 
+                 const attendanceList = attendanceData.get(calendarDateStr) || [];
+        const participantCount = attendanceList.filter(entry => entry.status === "参加").length;
+
+                
                 calendarHtml += `<td class="${classes}" data-date="${calendarDateStr}">
                     <div class="day-number">${dayCount}</div>
                     ${holidayName ? `<small>${holidayName}</small>` : ""}
@@ -111,6 +116,7 @@ function createCalendar(year, month) {
       <label><input type="radio" name="attendance" value="欠席">欠席</label>
       <label><input type="radio" name="attendance" value="未回答" checked>未回答</label>
     </div>
+  <div id="participant-list"></div>
     `;
 
     return calendarHtml;
@@ -137,6 +143,49 @@ function moveCalendar(e) {
 
     showCalendar(year, month);
 }
+
+
+
+async function fetchAttendanceData() {
+  if (!gapi.client.getToken()) {
+    tokenClient.callback = async (tokenResponse) => {
+      if (tokenResponse.error) {
+        console.error('認証エラー:', tokenResponse);
+        return;
+      }
+      console.log('認証成功');
+      await fetchAttendanceData(); // 再実行
+    };
+    tokenClient.requestAccessToken();
+    return;
+  }
+
+  try {
+    const response = await gapi.client.sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: `${SHEET_NAME}!A:C`,
+    });
+
+    const rows = response.result.values;
+    const attendanceMap = new Map();
+
+    if (rows && rows.length > 0) {
+      rows.forEach(([date, name, status]) => {
+        if (!attendanceMap.has(date)) {
+          attendanceMap.set(date, []);
+        }
+        attendanceMap.get(date).push({ name, status });
+      });
+    }
+
+    return attendanceMap;
+  } catch (error) {
+    console.error('データ取得エラー:', error);
+    return new Map();
+  }
+}
+
+
 
 // 前月・次月ボタンのイベント
 document.querySelector('#prev').addEventListener('click', moveCalendar);
@@ -169,7 +218,21 @@ document.addEventListener("click", function (e) {
         // if (selectedAttendance !== "未回答") {
         //     writeToSheet(clickedDateStr, userName, selectedAttendance);
         // }
+
+
+
+    const clickedDateStr = e.target.getAttribute('data-date');
+    const attendanceData = await fetchAttendanceData();
+    const attendanceList = attendanceData.get(clickedDateStr) || [];
+    const participantNames = attendanceList
+      .filter(entry => entry.status === "参加")
+      .map(entry => entry.name);
+
+    const participantListDiv = document.getElementById("participant-list");
+    participantListDiv.innerHTML = `<strong>${clickedDateStr} の参加者:</strong><br>${participantNames.join("<br>")}`;
+  
         
+      
         // ラジオボタンの状態を更新
         const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
         if (e.target.classList.contains("attendance-participate")) {
