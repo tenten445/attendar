@@ -166,9 +166,9 @@ document.addEventListener("click", function (e) {
         }
 
     // 書き込み処理を呼び出し
-        if (selectedAttendance !== "未回答") {
-            writeToSheet(clickedDateStr, userName, selectedAttendance);
-        }
+        // if (selectedAttendance !== "未回答") {
+        //     writeToSheet(clickedDateStr, userName, selectedAttendance);
+        // }
         
         // ラジオボタンの状態を更新
         const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
@@ -202,7 +202,17 @@ document.addEventListener("click", function (e) {
             } else if (e.target.value === "欠席") {
                 selectedCell.classList.add("attendance-absent"); // 青丸
             }
-            // 未回答の場合はクラスを消すだけ（何もしない）
+         const clickedDateStr = selectedCell.getAttribute("data-date");
+        const selectedAttendance = e.target.value;
+        const userName = localStorage.getItem("userName");
+
+        if (!userName) {
+            alert("ログインしていません。");
+            return;
+        }
+              if (selectedAttendance !== "未回答") {
+            writeToSheet(clickedDateStr, userName, selectedAttendance);
+        }
         }
     }
 });
