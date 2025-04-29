@@ -26,6 +26,22 @@ const holidays = new Map([
     ['2025/11/23', '勤労感謝の日'],
 ]);
 
+
+document.getElementById("login-btn").addEventListener("click", () => {
+  tokenClient.callback = async (tokenResponse) => {
+    if (tokenResponse.error) {
+      console.error("認証エラー:", tokenResponse);
+      return;
+    }
+    console.log("認証成功");
+    const attendanceData = await fetchAttendanceData(); // ← 認証後に呼び出し
+    showCalendar(year, month); // ← 初期表示
+  };
+  tokenClient.requestAccessToken(); // ← ユーザー操作の中！
+});
+
+
+
 async function showCalendar(year, month) {
     const calendarContainer = document.querySelector('#calendar');
     calendarContainer.innerHTML = '';
@@ -56,6 +72,10 @@ function highlightToday() {
 
 async function createCalendar(year, month) {
   const attendanceData = await fetchAttendanceData();
+    if (!attendanceData) {
+  console.error("出欠データが取得できませんでした（認証されていない可能性）");
+  return;
+}
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
     const endDayCount = endDate.getDate();
