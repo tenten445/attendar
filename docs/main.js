@@ -188,13 +188,6 @@ document.addEventListener("click", function (e) {
                 radio.checked = radio.value === "未回答";
             });
         }
-        
-        const dateStr = e.target.getAttribute('data-date');
-        const selectedAttendance = document.querySelector('input[name="attendance"]:checked').value;
-
-        const userName = localStorage.getItem('userName'); // もしくはJWTから名前を取得
-
-        
     }
     if (e.target.name === "attendance") {
         const selectedCell = document.querySelector(".calendar_td.selected");
