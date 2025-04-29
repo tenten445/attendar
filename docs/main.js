@@ -159,11 +159,11 @@ document.addEventListener("click", function (e) {
         const selectedAttendance = document.querySelector('input[name="attendance"]:checked')?.value;
 
         // ユーザー名取得（ログイン時に localStorage に保存してあると仮定）
-        const userName = localStorage.getItem('userName');
-        if (!userName) {
-            alert("ログインしていません。");
-            return;
-        }
+        // const userName = localStorage.getItem('userName');
+        // if (!userName) {
+        //     alert("ログインしていません。");
+        //     return;
+        // }
 
     // 書き込み処理を呼び出し
         // if (selectedAttendance !== "未回答") {
