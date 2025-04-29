@@ -42,7 +42,7 @@
         const user = parseJwt(jwtToken);
         document.getElementById("login-container").style.display = "none";
         document.getElementById("calendar-container").style.display = "block";
-        document.getElementById("user-info").textContent = `ようこそ、${user.name}さん！`;
+        document.getElementById("user-info").textContent = `ようこそ、${user.name}さん！2`;
         if (typeof showCalendar === "function") {
           showCalendar(year, month);
         }
