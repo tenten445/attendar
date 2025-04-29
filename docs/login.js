@@ -34,6 +34,17 @@ function gapiInit() {
 async function writeToSheet(date, name, attendance) {
     // トークンがまだ取得されていなければログイン要求
     if (!gapi.client.getToken()) {
+
+        
+   tokenClient.callback = async (tokenResponse) => {
+            if (tokenResponse.error) {
+                console.error('認証エラー:', tokenResponse);
+                return;
+            }
+            console.log('認証成功');
+            await writeToSheet(date, name, attendance); // 再実行
+        };
+        
         tokenClient.requestAccessToken();
         return;
     }
