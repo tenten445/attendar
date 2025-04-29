@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>出欠カレンダー2</title>
+  <title>出欠カレンダー</title>
   <style>
     table { border-collapse: collapse; width: 100%; }
     th, td { border: 1px solid #ccc; text-align: center; padding: 5px; }
@@ -118,12 +118,12 @@
 
             const dayData = attendanceData.get(dateStr) || [];
             const userName = localStorage.getItem("userName") || "匿名";
-const userStatus = dayData.find(entry => entry.name === userName)?.status;
-if (userStatus === "参加") {
-  classes.push("attendance-participate");
-} else if (userStatus === "欠席") {
-  classes.push("attendance-absent");
-  }
+            const userStatus = dayData.find(entry => entry.name === userName)?.status;
+            if (userStatus === "参加") {
+              classes.push("attendance-participate");
+            } else if (userStatus === "欠席") {
+              classes.push("attendance-absent");
+            }
 
             const participants = dayData.filter(p => p.status === "参加");
             const participantCount = participants.length;
