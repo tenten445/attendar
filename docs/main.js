@@ -153,7 +153,7 @@ document.addEventListener("click", function (e) {
 
         // クリックされたセルに 'selected' を追加
         e.target.classList.add("selected");
-        const clickedDateStr = e.target.getAttribute('data-date'); // 名前変更
+        const clickedDateStr = e.target.getAttribute('data-date');  // 名前変更
 
         // 出欠取得
         const selectedAttendance = document.querySelector('input[name="attendance"]:checked')?.value;
@@ -212,6 +212,7 @@ document.addEventListener("click", function (e) {
         }
     }
 });
+
 
 // 最初に表示
 showCalendar(year, month);
