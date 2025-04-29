@@ -83,15 +83,15 @@ function createCalendar(year, month) {
             } else if (dayCount > endDayCount) {
                 calendarHtml += '<td class="is-disabled"></td>';
             } else {
-                const dateStr = `${year}/${month}/${dayCount}`;
-                const isHoliday = holidays.has(dateStr);
-                const holidayName = holidays.get(dateStr);
+                const calendarDateStr = `${year}/${month}/${dayCount}`;  // 名前変更
+                const isHoliday = holidays.has(calendarDateStr);
+                const holidayName = holidays.get(calendarDateStr);
                 let classes = "calendar_td";
 
                 if (isHoliday) classes += " holiday";
-                if (dateStr === todayStr) classes += " today";
+                if (calendarDateStr === todayStr) classes += " today";
 
-                calendarHtml += `<td class="${classes}" data-date="${dateStr}">
+                calendarHtml += `<td class="${classes}" data-date="${calendarDateStr}">
                     <div class="day-number">${dayCount}</div>
                     ${holidayName ? `<small>${holidayName}</small>` : ""}
                 </td>`;
@@ -101,7 +101,7 @@ function createCalendar(year, month) {
 
         calendarHtml += '</tr>';
     }
-
+    
     calendarHtml += '</tbody></table>';
 
     // ラジオボタン（初期状態は未回答にチェック）
@@ -153,7 +153,7 @@ document.addEventListener("click", function (e) {
 
         // クリックされたセルに 'selected' を追加
         e.target.classList.add("selected");
-              const dateStr = e.target.getAttribute('data-date');
+        const clickedDateStr = e.target.getAttribute('data-date');  // 名前変更
 
         // 出欠取得
         const selectedAttendance = document.querySelector('input[name="attendance"]:checked')?.value;
@@ -167,7 +167,7 @@ document.addEventListener("click", function (e) {
 
     // 書き込み処理を呼び出し
         if (selectedAttendance !== "未回答") {
-            writeToSheet(dateStr, userName, selectedAttendance);
+            writeToSheet(clickedDateStr, userName, selectedAttendance);
         }
         
         // ラジオボタンの状態を更新
