@@ -55,6 +55,7 @@
 
         // ページロード時のログイン状態確認
         document.addEventListener("DOMContentLoaded", function () {
+            gapiInit(); // ← これを追加
             const jwtToken = localStorage.getItem('jwtToken');
             console.log("ローカルストレージから取得したJWTトークン:", jwtToken); // ログを追加
 
