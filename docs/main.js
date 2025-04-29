@@ -26,7 +26,7 @@ const holidays = new Map([
     ['2025/11/23', '勤労感謝の日'],
 ]);
 
-function showCalendar(year, month) {
+async function showCalendar(year, month) {
     const calendarContainer = document.querySelector('#calendar');
     calendarContainer.innerHTML = '';
     for (let i = 0; i < config.show; i++) {
@@ -54,7 +54,7 @@ function highlightToday() {
     }
 }
 
-function createCalendar(year, month) {
+async function createCalendar(year, month) {
   const attendanceData = await fetchAttendanceData();
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
@@ -192,7 +192,7 @@ document.querySelector('#prev').addEventListener('click', moveCalendar);
 document.querySelector('#next').addEventListener('click', moveCalendar);
 
 // 日付クリックで「選択」できるように
-document.addEventListener("click", function (e) {
+document.addEventListener("click",async function (e) {
     if (e.target.classList.contains("calendar_td")) {
         
         // すべてのセルから 'selected' を削除
@@ -221,7 +221,7 @@ document.addEventListener("click", function (e) {
 
 
 
-    const clickedDateStr = e.target.getAttribute('data-date');
+   // const clickedDateStr = e.target.getAttribute('data-date');
     const attendanceData = await fetchAttendanceData();
     const attendanceList = attendanceData.get(clickedDateStr) || [];
     const participantNames = attendanceList
