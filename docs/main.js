@@ -12,8 +12,8 @@ const holidays = new Map([
     ['2025/1/13', '成人の日'],
     ['2025/2/11', '建国記念の日'],
     ['2025/2/23', '天皇誕生日'],
-    ['2025/3/20', '春分の日2'],
-    ['2025/4/29', '昭和の日'],
+    ['2025/3/20', '春分の日'],
+    ['2025/4/29', '昭和の日2'],
     ['2025/5/3', '憲法記念日'],
     ['2025/5/4', 'みどりの日'],
     ['2025/5/5', 'こどもの日'],
@@ -26,23 +26,7 @@ const holidays = new Map([
     ['2025/11/23', '勤労感謝の日'],
 ]);
 
-
-document.getElementById("login-btn").addEventListener("click", () => {
-  tokenClient.callback = async (tokenResponse) => {
-    if (tokenResponse.error) {
-      console.error("認証エラー:", tokenResponse);
-      return;
-    }
-    console.log("認証成功");
-    const attendanceData = await fetchAttendanceData(); // ← 認証後に呼び出し
-    showCalendar(year, month); // ← 初期表示
-  };
-  tokenClient.requestAccessToken(); // ← ユーザー操作の中！
-});
-
-
-
-async function showCalendar(year, month) {
+function showCalendar(year, month) {
     const calendarContainer = document.querySelector('#calendar');
     calendarContainer.innerHTML = '';
     for (let i = 0; i < config.show; i++) {
@@ -70,12 +54,7 @@ function highlightToday() {
     }
 }
 
-async function createCalendar(year, month) {
-  const attendanceData = await fetchAttendanceData();
-    if (!attendanceData) {
-  console.error("出欠データが取得できませんでした（認証されていない可能性）");
-  return;
-}
+function createCalendar(year, month) {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
     const endDayCount = endDate.getDate();
@@ -112,10 +91,6 @@ async function createCalendar(year, month) {
                 if (isHoliday) classes += " holiday";
                 if (calendarDateStr === todayStr) classes += " today";
 
-                 const attendanceList = attendanceData.get(calendarDateStr) || [];
-        const participantCount = attendanceList.filter(entry => entry.status === "参加").length;
-
-                
                 calendarHtml += `<td class="${classes}" data-date="${calendarDateStr}">
                     <div class="day-number">${dayCount}</div>
                     ${holidayName ? `<small>${holidayName}</small>` : ""}
@@ -126,7 +101,7 @@ async function createCalendar(year, month) {
 
         calendarHtml += '</tr>';
     }
-    
+
     calendarHtml += '</tbody></table>';
 
     // ラジオボタン（初期状態は未回答にチェック）
@@ -136,7 +111,6 @@ async function createCalendar(year, month) {
       <label><input type="radio" name="attendance" value="欠席">欠席</label>
       <label><input type="radio" name="attendance" value="未回答" checked>未回答</label>
     </div>
-  <div id="participant-list"></div>
     `;
 
     return calendarHtml;
@@ -162,59 +136,17 @@ function moveCalendar(e) {
     }
 
     showCalendar(year, month);
+    showAttendanceOnCalendar();
 }
-
-
-
-async function fetchAttendanceData() {
-  if (!gapi.client.getToken()) {
-    tokenClient.callback = async (tokenResponse) => {
-      if (tokenResponse.error) {
-        console.error('認証エラー:', tokenResponse);
-        return;
-      }
-      console.log('認証成功');
-      await fetchAttendanceData(); // 再実行
-    };
-    tokenClient.requestAccessToken();
-    return;
-  }
-
-  try {
-    const response = await gapi.client.sheets.spreadsheets.values.get({
-      spreadsheetId: SHEET_ID,
-      range: `${SHEET_NAME}!A:C`,
-    });
-
-    const rows = response.result.values;
-    const attendanceMap = new Map();
-
-    if (rows && rows.length > 0) {
-      rows.forEach(([date, name, status]) => {
-        if (!attendanceMap.has(date)) {
-          attendanceMap.set(date, []);
-        }
-        attendanceMap.get(date).push({ name, status });
-      });
-    }
-
-    return attendanceMap;
-  } catch (error) {
-    console.error('データ取得エラー:', error);
-    return new Map();
-  }
-}
-
-
 
 // 前月・次月ボタンのイベント
 document.querySelector('#prev').addEventListener('click', moveCalendar);
 document.querySelector('#next').addEventListener('click', moveCalendar);
 
 // 日付クリックで「選択」できるように
-document.addEventListener("click",async function (e) {
+document.addEventListener("click", function (e) {
     if (e.target.classList.contains("calendar_td")) {
-        
+
         // すべてのセルから 'selected' を削除
         document.querySelectorAll(".calendar_td").forEach(td => {
             td.classList.remove("selected");
@@ -234,25 +166,11 @@ document.addEventListener("click",async function (e) {
         //     return;
         // }
 
-    // 書き込み処理を呼び出し
+        // 書き込み処理を呼び出し
         // if (selectedAttendance !== "未回答") {
         //     writeToSheet(clickedDateStr, userName, selectedAttendance);
         // }
 
-
-
-   // const clickedDateStr = e.target.getAttribute('data-date');
-    const attendanceData = await fetchAttendanceData();
-    const attendanceList = attendanceData.get(clickedDateStr) || [];
-    const participantNames = attendanceList
-      .filter(entry => entry.status === "参加")
-      .map(entry => entry.name);
-
-    const participantListDiv = document.getElementById("participant-list");
-    participantListDiv.innerHTML = `<strong>${clickedDateStr} の参加者:</strong><br>${participantNames.join("<br>")}`;
-  
-        
-      
         // ラジオボタンの状態を更新
         const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
         if (e.target.classList.contains("attendance-participate")) {
@@ -279,26 +197,43 @@ document.addEventListener("click",async function (e) {
             // 既存のクラスを削除
             selectedCell.classList.remove("attendance-participate", "attendance-absent");
 
-            // ラジオボタンの値に応じてクラスを追加
-            if (e.target.value === "参加") {
-                selectedCell.classList.add("attendance-participate"); // 赤丸
-            } else if (e.target.value === "欠席") {
-                selectedCell.classList.add("attendance-absent"); // 青丸
-            }
-         const clickedDateStr = selectedCell.getAttribute("data-date");
-        const selectedAttendance = e.target.value;
-         const userName = localStorage.getItem("userName");
 
-        // if (!userName) {
-        //     alert("ログインしていません。");
-        //     return;
-        // }
-              if (selectedAttendance !== "未回答") {
-            writeToSheet(clickedDateStr, userName, selectedAttendance);
-        }
+            const statusCount = {
+                参加: [],
+                欠席: []
+            };
+
+            
+            // ラジオボタンの値に応じてクラスを追加
+            // if (e.target.value === "参加") {
+            // } else if (e.target.value === "欠席") {
+               
+            // }
+
+
+            const clickedDateStr = selectedCell.getAttribute("data-date");
+            const selectedAttendance = e.target.value;
+            const userName = localStorage.getItem("userName");
+
+            if (!userName) {
+                alert("ログインしていません。");
+                return;
+            }
+            if (selectedAttendance !== "未回答") {
+                writeToSheet(clickedDateStr, userName, selectedAttendance);
+            }
         }
     }
 });
 
 // 最初に表示
-showCalendar(year, month);
+
+document.addEventListener("DOMContentLoaded", async function () {
+    await gapiInit(); // ← Sheets API の初期化
+    
+    showCalendar(year, month);
+    await showAttendanceOnCalendar();
+
+    //showCalendar(year, month);
+});
+
