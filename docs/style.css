@@ -104,3 +104,19 @@ h1 {
     position: relative;
     left: 0; /* 左寄せ */
 }
+.circle {
+    font-size: 12px;
+    padding: 2px 4px;
+    margin-top: 2px;
+    border-radius: 8px;
+    display: inline-block;
+    color: white;
+}
+
+.circle.red {
+    background-color: red;
+}
+
+.circle.blue {
+    background-color: blue;
+}
