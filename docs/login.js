@@ -33,25 +33,20 @@ async function gapiInit() {
 async function writeToSheet(date, name, attendance) {
     // トークンがまだ取得されていなければログイン要求
     await gapiInit(); // ←追加
-    if (!gapi.client.getToken()) {
+if (!gapi.client.getToken()) {
+    tokenClient.callback = async (tokenResponse) => {
+        if (tokenResponse.error) {
+            console.error('認証エラー:', tokenResponse);
+            return;
+        }
+        console.log('認証成功');
+        // DriveAppの操作は削除
+        await writeToSheet(date, name, attendance); // 再実行
+    };
 
-
-        tokenClient.callback = async (tokenResponse) => {
-            if (tokenResponse.error) {
-                console.error('認証エラー:', tokenResponse);
-                return;
-            }
-            console.log('認証成功');
-            const file = DriveApp.getFileById('1W61LsGM7uS9RwKgI5KFJ4reulIC0s5aNvb2QLDOo4KA');
-            const email ='robocon-bot@my-project-458012.iam.gserviceaccount.com'
-            file.addEditor(email);
-            await writeToSheet(date, name, attendance); // 再実行
-            file.removeEditor(email);
-        };
-
-        tokenClient.requestAccessToken();
-        return;
-    }
+    tokenClient.requestAccessToken();
+    return;
+}
 
     const values = [[date, name, attendance]];
 
