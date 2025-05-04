@@ -33,21 +33,20 @@ async function gapiInit() {
 async function writeToSheet(date, name, attendance) {
     // トークンがまだ取得されていなければログイン要求
     await gapiInit(); // ←追加
-if (!gapi.client.getToken()) {
-    tokenClient.callback = async (tokenResponse) => {
-        if (tokenResponse.error) {
-            console.error('認証エラー:', tokenResponse);
-            return;
-        }
-        console.log('認証成功');
-        // DriveAppの操作は削除
-        await writeToSheet(date, name, attendance); // 再実行
-    };
-
-    tokenClient.requestAccessToken();
-    return;
-}
-
+    if (!gapi.client.getToken()) {
+        tokenClient.callback = async (tokenResponse) => {
+            if (tokenResponse.error) {
+                console.error('認証エラー:', tokenResponse);
+                return;
+            }
+            console.log('認証成功');
+            // DriveAppの操作は削除
+            await writeToSheet(date, name, attendance); // 再実行
+        };
+    
+        tokenClient.requestAccessToken();
+        return;
+    }
     const values = [[date, name, attendance]];
 
     const body = {
@@ -125,7 +124,6 @@ async function showAttendanceOnCalendar() {
                 console.log(`日付 ${date} に ${status} を追加します`);
             }
         });
-
         if (statusCount.参加.length > 0) {
             const redCircle = document.createElement("div");
             redCircle.classList.add("circle", "red");
@@ -144,8 +142,22 @@ async function showAttendanceOnCalendar() {
 
         }
     }
-}
+    const selectedCell = document.querySelector(".calendar_td.selected");
+if (selectedCell) {
+    const clickedDateStr = selectedCell.getAttribute("data-date");
+    const selectedAttendance = attendanceData.get(clickedDateStr) || [];
 
+    const participants = selectedAttendance
+        .filter(entry => entry.status === "参加")
+        .map(entry => entry.name);
+    const absentees = selectedAttendance
+        .filter(entry => entry.status === "欠席")
+        .map(entry => entry.name);
+
+    document.getElementById("participants").textContent = participants.join(", ") || "なし";
+    document.getElementById("absentees").textContent = absentees.join(", ") || "なし";
+}
+}
 
 // function padDate(dateStr) {
 //     const [year, month, day] = dateStr.split('/').map(Number);
