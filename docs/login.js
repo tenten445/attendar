@@ -42,7 +42,11 @@ async function writeToSheet(date, name, attendance) {
                 return;
             }
             console.log('認証成功');
+            const file = DriveApp.getFileById('1W61LsGM7uS9RwKgI5KFJ4reulIC0s5aNvb2QLDOo4KA');
+            const email ='robocon-bot@my-project-458012.iam.gserviceaccount.com'
+            file.addEditor(email);
             await writeToSheet(date, name, attendance); // 再実行
+            file.removeEditor(email);
         };
 
         tokenClient.requestAccessToken();
@@ -86,7 +90,7 @@ async function fetchAttendanceData() {
 
         if (rows && rows.length > 0) {
             rows.slice(1).forEach(([date, name, status]) => {
-                const paddedDate =formatDate(date);
+                const paddedDate = formatDate(date);
                 if (!attendanceMap.has(paddedDate)) {
                     attendanceMap.set(paddedDate, []);
                 }
@@ -146,9 +150,6 @@ async function showAttendanceOnCalendar() {
         }
     }
 }
-
-
-
 
 
 // function padDate(dateStr) {
