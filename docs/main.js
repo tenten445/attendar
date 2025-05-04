@@ -144,9 +144,24 @@ document.querySelector('#prev').addEventListener('click', moveCalendar);
 document.querySelector('#next').addEventListener('click', moveCalendar);
 
 // 日付クリックで「選択」できるように
-document.addEventListener("click", function (e) {
+document.addEventListener("click", async function (e) {
     if (e.target.classList.contains("calendar_td")) {
 
+        const clickedDateStr = e.target.getAttribute('data-date');  // 名前変更
+        const attendanceData = await fetchAttendanceData();
+        
+        const selectedAttendance = attendanceData.get(clickedDateStr) || [];
+
+        const filtered = Array.from(attendanceData.values()).flat().filter(entry => entry.date === clickedDateStr);
+        const participants = selectedAttendance
+        .filter(entry => entry.status === "参加")
+        .map(entry => entry.name);
+    const absentees = selectedAttendance
+        .filter(entry => entry.status === "欠席")
+        .map(entry => entry.name);
+        
+        document.getElementById("participants").textContent = participants.join(", ") || "なし";
+        document.getElementById("absentees").textContent = absentees.join(", ") || "なし";
         // すべてのセルから 'selected' を削除
         document.querySelectorAll(".calendar_td").forEach(td => {
             td.classList.remove("selected");
@@ -154,11 +169,9 @@ document.addEventListener("click", function (e) {
 
         // クリックされたセルに 'selected' を追加
         e.target.classList.add("selected");
-        const clickedDateStr = e.target.getAttribute('data-date');  // 名前変更
-
         // 出欠取得
-        const selectedAttendance = document.querySelector('input[name="attendance"]:checked')?.value;
-
+        //const selectedAttendance = document.querySelector('input[name="attendance"]:checked')?.value;
+        
         // ユーザー名取得（ログイン時に localStorage に保存してあると仮定）
         // const userName = localStorage.getItem('userName');
         // if (!userName) {
@@ -203,11 +216,11 @@ document.addEventListener("click", function (e) {
                 欠席: []
             };
 
-            
+
             // ラジオボタンの値に応じてクラスを追加
             // if (e.target.value === "参加") {
             // } else if (e.target.value === "欠席") {
-               
+
             // }
 
 
@@ -221,6 +234,7 @@ document.addEventListener("click", function (e) {
             }
             if (selectedAttendance !== "未回答") {
                 writeToSheet(clickedDateStr, userName, selectedAttendance);
+                
             }
         }
     }
@@ -230,7 +244,7 @@ document.addEventListener("click", function (e) {
 
 document.addEventListener("DOMContentLoaded", async function () {
     await gapiInit(); // ← Sheets API の初期化
-    
+
     showCalendar(year, month);
     await showAttendanceOnCalendar();
 
