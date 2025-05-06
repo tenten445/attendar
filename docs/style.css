@@ -20,7 +20,8 @@ table {
     margin-top: 10px;
 }
 
-th, td {
+th,
+td {
     border: 1px solid #ccc;
     width: 100px;
     height: 80px;
@@ -61,22 +62,23 @@ td.is-disabled {
 
 .selected {
     border: 2px solid red;
-    box-sizing: border-box; /* はみ出し防止 */
+    box-sizing: border-box;
+    /* はみ出し防止 */
 }
 
 .attendance-check {
-  margin-top: 20px;
-  text-align: center;
+    margin-top: 20px;
+    text-align: center;
 }
 
 .attendance-check label {
-  margin: 0 10px;
-  font-size: 1.2em;
+    margin: 0 10px;
+    font-size: 1.2em;
 }
 
 h1 {
-  font-size: 2rem;
-  margin: 1rem 0;
+    font-size: 2rem;
+    margin: 1rem 0;
 }
 
 /* 参加（赤丸） */
@@ -87,9 +89,11 @@ h1 {
     height: 10px;
     background-color: red;
     border-radius: 50%;
-    margin: 5px 0 0 0; /* 上下マージンの調整、左寄せ */
+    margin: 5px 0 0 0;
+    /* 上下マージンの調整、左寄せ */
     position: relative;
-    left: 0; /* 左寄せ */
+    left: 0;
+    /* 左寄せ */
 }
 
 /* 欠席（青丸） */
@@ -100,10 +104,13 @@ h1 {
     height: 10px;
     background-color: blue;
     border-radius: 50%;
-    margin: 20px 0 0 0; /* 上下マージンの調整、左寄せ */
+    margin: 20px 0 0 0;
+    /* 上下マージンの調整、左寄せ */
     position: relative;
-    left: 0; /* 左寄せ */
+    left: 0;
+    /* 左寄せ */
 }
+
 .circle {
     font-size: 12px;
     padding: 2px 4px;
@@ -119,4 +126,99 @@ h1 {
 
 .circle.blue {
     background-color: blue;
+}
+
+@media screen and (max-width: 600px) {
+
+    table th,
+    table td {
+        width: 50px;
+        height: 50px;
+        font-size: 0.8em;
+    }
+
+    .calendar_td .day-number {
+        font-size: 16px;
+    }
+
+    .circle {
+        font-size: 10px;
+    }
+}
+.attendee-names {
+    font-size: 0.8em;
+    margin-top: 4px;
+}
+
+body {
+    text-align: center;
+    font-family: sans-serif;
+    background: linear-gradient(120deg, #f0f8ff, #e6f7ff); /* 薄い水色系のグラデーション */
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+#calendar  {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+
+button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+h1 {
+    font-size: 2rem;
+    margin: 1rem 0;
+    color: #333;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+#attendanceList {
+    margin-top: 30px;
+    background-color: #ffffffcc; /* 半透明の白背景 */
+    border: 2px solid #007acc;   /* 青系の枠線 */
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-size: 1.1em;
+    color: #333;
+    text-align: left;
+}
+
+#attendanceList h4 {
+    font-size: 1.4em;
+    margin-bottom: 15px;
+    color: #005999;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+#attendanceList div {
+    margin-bottom: 10px;
+}
+
+#participants, #absentees {
+    font-weight: bold;
+    color: #333;
 }

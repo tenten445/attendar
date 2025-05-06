@@ -1,15 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="jp">
 
 <head>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ログイン付きカレンダー</title>
     <link rel="stylesheet" href="style.css">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js"></script>
     <script>
         // JWTデコード関数
         function parseJwt(token) {
@@ -44,6 +43,7 @@
 
         // カレンダー表示関数
         function showCalendarForUser(user) {
+
             document.getElementById("user-info").innerText = `ようこそ、${user.name}さん！`;
             document.getElementById("calendar-container").style.display = "block";
             document.getElementById("login-container").style.display = "none";
@@ -66,7 +66,7 @@
                 const user = parseJwt(jwtToken);
                 console.log("自動ログインのユーザー情報:", user); // ログを追加
                 showCalendarForUser(user);
-                
+
             }
 
             // ログアウト機能
@@ -83,38 +83,36 @@
     <!-- ログインセクション -->
     <div id="login-container">
         <h1>ログインしてください</h1>
-        <div id="g_id_onload"
-            data-client_id="775352245980-g6dm3nv0pcpn9q1ga0s0c03r755669gb.apps.googleusercontent.com"
-            data-login_uri=""
-            data-auto_prompt="false"
-            data-callback="handleCredentialResponse">
+        <div id="g_id_onload" data-client_id="775352245980-g6dm3nv0pcpn9q1ga0s0c03r755669gb.apps.googleusercontent.com"
+            data-login_uri="" data-auto_prompt="false" data-callback="handleCredentialResponse">
         </div>
-        <div class="g_id_signin"
-            data-type="standard"
-            data-size="large"
-            data-theme="outline"
-            data-text="sign_in_with"
-            data-shape="rectangular"
-            data-logo_alignment="left">
+        <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with"
+            data-shape="rectangular" data-logo_alignment="left">
         </div>
     </div>
 
     <!-- カレンダーセクション -->
     <div id="calendar-container" style="display: none;">
+        
+        <img src="attendar.png"width="10%" height="10%"/>
         <h2 id="user-info"></h2>
         <div class="button-wrapper">
             <button id="prev" type="button">前の月</button>
             <button id="next" type="button">次の月</button>
+
         </div>
+
         <div id="calendar"></div>
-         <!--  <button id="logout-btn">ログアウト</button>-->
+        <!--  <button id="logout-btn">ログアウト</button>-->
+        <div id="attendanceList">
+            <h4>出欠状況</h4>
+            <div><strong>参加:</strong> <span id="participants"></span></div>
+            <div><strong>欠席:</strong> <span id="absentees"></span></div>
+    
+        </div>
+        ver:0.1
     </div>
-    <div id="attendanceList">
-        <h4>出欠状況</h4>
-        <div><strong>参加:</strong> <span id="participants"></span></div>
-        <div><strong>欠席:</strong> <span id="absentees"></span></div>
-      </div>
-      
+    
 
     <!-- main.js を読み込み -->
     <script src="main.js"></script>
